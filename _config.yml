@@ -82,12 +82,12 @@ analytics:
 author:
   name             : "Phillip Hogan"
   avatar           : "profile.png"
-  bio              : "Your biography for the left-hand sidebar"
+  bio              : "Ph.D. Student in the Department of Entomology, University of Illinois at Urbana-Champaign"
   location         : "Location"
   employer         :
   pubmed           : "https://www.ncbi.nlm.nih.gov/pubmed/?term=john+snow"
   googlescholar    : "https://scholar.google.com/citations?user=sJeB90UAAAAJ&hl=en&oi=ao"
-  email            :
+  email            :  "pnhogan2@illinois.edu"
   researchgate     :  "https://www.researchgate.net/profile/Phillip_Hogan2"
   uri              :
   bitbucket        :
