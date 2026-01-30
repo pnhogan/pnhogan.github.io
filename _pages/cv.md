@@ -11,9 +11,9 @@ redirect_from:
 
 Education
 ======
-* B.S. in GitHub, GitHub University, 2012
-* M.S. in Jekyll, GitHub University, 2014
-* Ph.D in Version Control Theory, GitHub University, 2018 (expected)
+* B.Sc. in Wildlife and Fisheries Management, Frostburg State University, 2019
+* M.Sc. in Biology, Western Kentucky University, 2021
+* Ph.D in Entomology, University of Illinois, Urbana-Champaign, 2027 (expected)
 
 Work experience
 ======
