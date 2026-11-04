@@ -10,7 +10,7 @@ locale                   : "en-US"
 title                    : "Phillip Hogan / Personal Website"
 title_separator          : "-"
 name                     : &name "Phillip Hogan"
-description              : &description "personal description"
+description              : &description "Phillip Hogan, entomologist studying the systematics, distribution, and conservation of stoneflies (Plecoptera) and caddisflies (Trichoptera)"
 url                      : https://pnhogan.github.io # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
 baseurl                  : "" # the subpath of your site, e.g. "/blog"
 repository               : "pnhogan/pnhogan.github.io"
@@ -82,10 +82,10 @@ analytics:
 author:
   name             : "Phillip Hogan"
   avatar           : "profile.png"
-  bio              : "Ph.D. Student in the Department of Entomology, University of Illinois at Urbana-Champaign"
-  location         : "Location"
-  employer         :
-  pubmed           : "https://www.ncbi.nlm.nih.gov/pubmed/?term=john+snow"
+  bio              : "Ph.D. Candidate, Department of Entomology, University of Illinois Urbana-Champaign"
+  location         : "Urbana, IL"
+  employer         : "Illinois Natural History Survey"
+  pubmed           :
   googlescholar    : "https://scholar.google.com/citations?user=sJeB90UAAAAJ&hl=en&oi=ao"
   email            :  "pnhogan2@illinois.edu"
   researchgate     :  "https://www.researchgate.net/profile/Phillip_Hogan2"
@@ -96,7 +96,7 @@ author:
   flickr           :
   facebook         :
   foursquare       :
-  github           : "academicpages"
+  github           : "pnhogan"
   google_plus      :
   keybase          :
   instagram        :
@@ -109,7 +109,7 @@ author:
   stackoverflow    : # http://stackoverflow.com/users/123456/username
   steam            :
   tumblr           :
-  twitter          : "replacethistwitterhandle"
+  twitter          :
   vine             :
   weibo            :
   xing             :
