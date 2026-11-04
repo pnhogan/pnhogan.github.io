@@ -1,0 +1,112 @@
+/* Collections page (see assets/js/collections.js) */
+#collections-app {
+  --coll-series: #0f80a8;      /* bar + map point color (validated: contrast & chroma) */
+  --coll-track: #eef1f3;
+  --coll-text: #3d4144;
+  --coll-muted: #6b7175;
+  --coll-border: #e3e6e8;
+  --coll-surface: #ffffff;
+  position: relative;
+  color: var(--coll-text);
+}
+#collections-app h2 { margin-top: 2em; }
+.coll-note { color: var(--coll-muted); font-size: 0.8em; margin: -0.5em 0 0.75em; }
+.coll-muted { color: var(--coll-muted); }
+.coll-status { padding: 1em 0; color: var(--coll-muted); }
+
+/* stat tiles */
+.coll-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.75em;
+  margin: 1em 0 0.5em;
+}
+.coll-stat {
+  border: 1px solid var(--coll-border);
+  border-radius: 6px;
+  padding: 0.6em 0.8em;
+  background: var(--coll-surface);
+}
+.coll-stat-n { display: block; font-size: 1.35em; font-weight: 600; font-variant-numeric: tabular-nums; }
+.coll-stat-l { display: block; font-size: 0.75em; color: var(--coll-muted); }
+
+/* map */
+#coll-map {
+  height: 460px;
+  border: 1px solid var(--coll-border);
+  border-radius: 6px;
+  z-index: 0;
+}
+.coll-cluster {
+  background: rgba(15, 128, 168, 0.25);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+.coll-cluster span {
+  background: var(--coll-series);
+  color: #fff;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  width: calc(100% - 8px); height: calc(100% - 8px);
+  display: flex; align-items: center; justify-content: center;
+  font: 600 12px/1 -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+.coll-pop { font-size: 13px; line-height: 1.4; }
+.coll-pop ul { margin: 0.4em 0 0; padding-left: 1.1em; }
+.coll-pop li { margin: 0; }
+
+/* top species bar list */
+.coll-bars { display: grid; gap: 4px; }
+.coll-bar-row {
+  display: grid;
+  grid-template-columns: minmax(9em, 14em) 1fr 3.5em;
+  align-items: center;
+  gap: 0.6em;
+  font-size: 0.8em;
+  padding: 2px 4px;
+  border-radius: 4px;
+  outline: none;
+}
+.coll-bar-row:hover, .coll-bar-row:focus-visible { background: #f5f7f8; }
+.coll-bar-row:focus-visible { box-shadow: 0 0 0 2px var(--coll-series); }
+.coll-bar-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.coll-bar-track { height: 14px; display: block; }
+.coll-bar {
+  display: block;
+  height: 100%;
+  min-width: 2px;
+  background: var(--coll-series);
+  border-radius: 0 4px 4px 0;   /* rounded data end, square at the baseline */
+}
+.coll-bar-val { text-align: right; font-variant-numeric: tabular-nums; color: var(--coll-muted); }
+.coll-tip {
+  position: absolute;
+  z-index: 10;
+  pointer-events: none;
+  background: var(--coll-surface);
+  border: 1px solid var(--coll-border);
+  border-radius: 6px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  padding: 0.5em 0.7em;
+  font-size: 0.75em;
+  max-width: 260px;
+}
+.coll-tip-grid { display: grid; grid-template-columns: auto auto; gap: 0.15em 1em; margin-top: 0.35em; }
+.coll-tip-grid span { color: var(--coll-muted); }
+.coll-tip-grid b { text-align: right; font-variant-numeric: tabular-nums; }
+
+/* recent table */
+.coll-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.coll-table { width: 100%; font-size: 0.75em; border-collapse: collapse; display: table; }
+.coll-table th { text-align: left; white-space: nowrap; border-bottom: 2px solid var(--coll-border); }
+.coll-table td, .coll-table th { padding: 0.4em 0.6em; vertical-align: top; }
+.coll-table tbody tr:nth-child(even) { background: #fafbfb; }
+.coll-num { text-align: right !important; font-variant-numeric: tabular-nums; }
+.coll-nowrap { white-space: nowrap; }
+.coll-table td:nth-child(4) { min-width: 6.5em; }
+.coll-more { margin-top: 0.75em; }
+
+@media (max-width: 600px) {
+  #coll-map { height: 340px; }
+  .coll-bar-row { grid-template-columns: 10em 1fr 2.8em; }
+}

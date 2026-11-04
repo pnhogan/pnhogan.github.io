@@ -1,0 +1,24 @@
+---
+layout: archive
+title: "Collections"
+permalink: /collections/
+author_profile: true
+# Google Sheets "Publish to web" CSV link for the Darwin Core occurrence tab.
+# Edits to the sheet show up here automatically (Google refreshes the CSV within ~5 minutes).
+occurrence_csv: "https://docs.google.com/spreadsheets/d/e/2PACX-1vR8H-jG-zkaniOuzQANnOrO7CXBENNk_514M-_yYGziUJsmpX6kZdb9kCNM9VgezP0bzU9UR3rMohdP/pub?gid=1627680091&single=true&output=csv"
+---
+
+{% include base_path %}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.min.css">
+<link rel="stylesheet" href="{{ base_path }}/assets/css/collections.css">
+
+<p>A summary of the natural history specimens I have collected and/or identified, drawn live from my Darwin Core occurrence dataset. Specimens are housed in PNHC and in the collections of the Illinois Natural History Survey (INHS), Western Kentucky University (WKUC), and the Smithsonian National Museum of Natural History (USNM). A citable archive of these records is available on Zenodo: <a href="https://doi.org/10.5281/zenodo.7946850">10.5281/zenodo.7946850</a>. Records are shared under a <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> license; <a href="{{ page.occurrence_csv }}">download the current data (CSV)</a>.</p>
+
+<div id="collections-app" data-csv-url="{{ page.occurrence_csv }}"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
+<script src="{{ base_path }}/assets/js/collections.js"></script>
