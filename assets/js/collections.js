@@ -62,9 +62,17 @@
     '  <h2 id="coll-map-h">Collection localities</h2>' +
     '  <p class="coll-note">Each point is a collecting site; numbers are clusters of nearby sites. Click a site for details.</p>' +
     '  <div id="coll-map" role="region" aria-labelledby="coll-map-h"></div>' +
+    '  <h2 id="coll-cal-h">Collecting calendar</h2>' +
+    '  <p class="coll-note coll-cal-note">Days of the year I have collected on, all years combined. Darker days have more collection records; hover a day for details.</p>' +
+    '  <div class="coll-legend coll-cal-legend"></div>' +
+    '  <div id="coll-cal" role="img" aria-labelledby="coll-cal-h"></div>' +
     '  <h2 id="coll-top-h">Top ' + TOP_N + ' most collected species</h2>' +
     '  <p class="coll-note">Number of collection records (specimen lots) identified to species.</p>' +
     '  <div class="coll-bars" role="list" aria-labelledby="coll-top-h"></div>' +
+    '  <h2 id="coll-tax-h">Species per family</h2>' +
+    '  <p class="coll-note">Number of species collected in each family, grouped by order. Hover a bar to list the species.</p>' +
+    '  <div class="coll-legend coll-tax-legend"></div>' +
+    '  <div class="coll-bars coll-tax" role="list" aria-labelledby="coll-tax-h"></div>' +
     '  <h2 id="coll-recent-h">Recent collections</h2>' +
     '  <div class="coll-table-wrap"><table class="coll-table" aria-labelledby="coll-recent-h">' +
     '    <thead><tr><th scope="col">Date</th><th scope="col">Taxon</th><th scope="col">Locality</th>' +
@@ -88,7 +96,9 @@
       bodyEl.hidden = false;
       renderStats(rows);
       renderMap(rows);
+      renderCalendar(rows);
       renderBars(rows);
+      renderTaxonomy(rows);
       renderTable(rows);
     },
     error: fail
@@ -213,21 +223,29 @@
         '<span class="coll-bar-val">' + fmt(e.records) + "</span></div>";
     }).join("");
 
-    var tip = app.querySelector(".coll-tip");
-    function show(ev) {
-      var row = ev.currentTarget, e = top[+row.getAttribute("data-i")];
-      tip.innerHTML = "<strong><i>" + esc(e.name) + "</i></strong> " + esc(e.auth) +
+    attachTips(host, function (i) {
+      var e = top[i];
+      return "<strong><i>" + esc(e.name) + "</i></strong> " + esc(e.auth) +
         '<div class="coll-tip-grid"><span>Records</span><b>' + fmt(e.records) + "</b>" +
         "<span>Specimens</span><b>" + fmt(e.specimens) + "</b>" +
         "<span>Share of all records</span><b>" + ((e.records / total) * 100).toFixed(1) + "%</b>" +
         (e.order ? "<span>Order</span><b>" + esc(e.order) + "</b>" : "") + "</div>";
+    });
+  }
+
+  // Hover/focus tooltip for bar rows (.coll-bar-row[data-i]) inside host.
+  function attachTips(host, contentFor) {
+    var tip = app.querySelector(".coll-tip");
+    function show(ev) {
+      var row = ev.currentTarget;
+      tip.innerHTML = contentFor(+row.getAttribute("data-i"));
       tip.hidden = false;
       var bar = row.querySelector(".coll-bar").getBoundingClientRect();
       var appBox = app.getBoundingClientRect();
       var x = bar.right - appBox.left + 12;
       var maxX = app.clientWidth - tip.offsetWidth - 4;
       tip.style.left = Math.max(4, Math.min(x, maxX)) + "px";
-      tip.style.top = (bar.top - appBox.top + bar.height / 2 - tip.offsetHeight / 2) + "px";
+      tip.style.top = Math.max(0, bar.top - appBox.top + bar.height / 2 - tip.offsetHeight / 2) + "px";
     }
     function hide() { tip.hidden = true; }
     Array.prototype.forEach.call(host.querySelectorAll(".coll-bar-row"), function (row) {
@@ -235,6 +253,174 @@
       row.addEventListener("focus", show);
       row.addEventListener("mouseleave", hide);
       row.addEventListener("blur", hide);
+    });
+  }
+
+  // ---------------------------------------------------------------- collecting calendar
+  // Month (columns) x day-of-month (rows) grid, all years combined, in the style of a
+  // vertical calendar heatmap. Weekdays are omitted because they differ between years.
+  var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  var MONTH_NAMES = ["January", "February", "March", "April", "May", "June", "July", "August",
+    "September", "October", "November", "December"];
+  var DAYS_IN = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+  function renderCalendar(rows) {
+    var el = document.getElementById("coll-cal");
+    if (!window.echarts) { el.innerHTML = '<p class="coll-muted">Calendar unavailable.</p>'; return; }
+
+    var cells = {}; // "m-d" -> stats
+    rows.forEach(function (r) {
+      var m = val(r, "eventDate").match(/^(\d{4})-(\d{2})-(\d{2})/);
+      if (!m) return;
+      var mi = +m[2] - 1, di = +m[3] - 1;
+      if (mi < 0 || mi > 11 || di < 0 || di >= DAYS_IN[mi]) return;
+      var c = cells[mi + "-" + di] || (cells[mi + "-" + di] = { records: 0, specimens: 0, years: {}, sites: {} });
+      c.records += 1;
+      c.specimens += count(r);
+      c.years[m[1]] = 1;
+      c.sites[val(r, "decimalLatitude") + "," + val(r, "decimalLongitude")] = 1;
+    });
+
+    var data = [], days = 0;
+    for (var mi = 0; mi < 12; mi++) {
+      for (var di = 0; di < DAYS_IN[mi]; di++) {
+        var c = cells[mi + "-" + di];
+        if (c) days++;
+        data.push([mi, di, c ? c.records : 0]);
+      }
+    }
+    var note = app.querySelector(".coll-cal-note");
+    note.textContent = "Days of the year I have collected on, all years combined: " + days +
+      " of 366 calendar days. Darker days have more collection records; hover a day for details.";
+
+    // Ordinal blue ramp (lightest step still clears 2:1 on white); "None" is the empty track.
+    var pieces = [
+      { value: 0, label: "None", color: "#eef1f3" },
+      { min: 1, max: 5, label: "1–5", color: "#86b6ef" },
+      { min: 6, max: 15, label: "6–15", color: "#3987e5" },
+      { min: 16, max: 30, label: "16–30", color: "#256abf" },
+      { min: 31, max: 60, label: "31–60", color: "#184f95" },
+      { min: 61, label: "61+", color: "#0d366b" }
+    ];
+    // HTML legend so it wraps on narrow screens.
+    app.querySelector(".coll-cal-legend").innerHTML = '<span class="coll-muted">Records per day:</span>' +
+      pieces.map(function (p) {
+        return '<span class="coll-legend-item"><span class="coll-swatch" style="background:' + p.color + '"></span>' + esc(p.label) + "</span>";
+      }).join("");
+
+    var font = getComputedStyle(app).fontFamily;
+    var narrow = el.clientWidth < 420;
+    var chart = echarts.init(el, null, { renderer: "svg" });
+    chart.setOption({
+      textStyle: { fontFamily: font, color: "#3d4144" },
+      tooltip: {
+        confine: true,
+        borderColor: "#e3e6e8",
+        textStyle: { fontSize: 12, color: "#3d4144" },
+        formatter: function (p) {
+          var mi = p.data[0], di = p.data[1], c = cells[mi + "-" + di];
+          var head = "<strong>" + MONTH_NAMES[mi] + " " + (di + 1) + "</strong>";
+          if (!c) return head + '<div class="coll-muted">No collections</div>';
+          var yrs = Object.keys(c.years).sort();
+          return head + '<div class="coll-tip-grid"><span>Records</span><b>' + fmt(c.records) + "</b>" +
+            "<span>Specimens</span><b>" + fmt(c.specimens) + "</b>" +
+            "<span>Sites</span><b>" + fmt(Object.keys(c.sites).length) + "</b>" +
+            "<span>Years</span><b>" + yrs.join(", ") + "</b></div>";
+        }
+      },
+      visualMap: { type: "piecewise", show: false, pieces: pieces },
+      grid: { top: 22, bottom: 6, left: 26, right: 4 },
+      xAxis: {
+        type: "category", data: MONTHS, position: "top",
+        axisLine: { show: false }, axisTick: { show: false },
+        axisLabel: { fontSize: 11, color: "#6b7175", interval: 0,
+          formatter: function (v) { return narrow ? v.charAt(0) : v; } },
+        splitArea: { show: false }
+      },
+      yAxis: {
+        type: "category", inverse: true,
+        data: Array.from({ length: 31 }, function (_, i) { return String(i + 1); }),
+        axisLine: { show: false }, axisTick: { show: false },
+        axisLabel: { fontSize: 10, color: "#6b7175", interval: 0,
+          formatter: function (v) { return (+v === 1 || +v % 5 === 0) ? v : ""; } }
+      },
+      series: [{
+        type: "heatmap",
+        data: data,
+        itemStyle: { borderColor: "#ffffff", borderWidth: 2, borderRadius: 3 },
+        emphasis: { itemStyle: { borderColor: "#3d4144", borderWidth: 1.5 } },
+        progressive: 0
+      }]
+    });
+    window.addEventListener("resize", function () { chart.resize(); });
+  }
+
+  // ---------------------------------------------------------------- species per family, by order
+  // Orders get fixed colors so an order keeps its color as the data changes (validated
+  // categorical palette, adjacent order). Orders not listed fold into "Other orders".
+  var ORDER_COLORS = [
+    ["Plecoptera", "#2a78d6"], ["Trichoptera", "#eb6834"], ["Ephemeroptera", "#1baf7a"],
+    ["Megaloptera", "#eda100"], ["Odonata", "#e87ba4"], ["Neuroptera", "#008300"],
+    ["Hemiptera", "#6250d6"]
+  ];
+  var OTHER = { name: "Other orders", color: "#8a8f93" };
+
+  function renderTaxonomy(rows) {
+    var byOrder = {}; // group name -> family label -> {order, species:{}}
+    rows.forEach(function (r) {
+      var sp = speciesKey(r); if (!sp) return;
+      var order = val(r, "order") || "Order not recorded";
+      var known = ORDER_COLORS.some(function (o) { return o[0] === order; });
+      var group = known ? order : OTHER.name;
+      var fam = val(r, "family") || "Family not recorded";
+      var label = known ? fam : fam + " (" + order + ")";
+      var g = byOrder[group] || (byOrder[group] = {});
+      var f = g[label] || (g[label] = { family: fam, order: order, species: {} });
+      f.species[sp] = 1;
+    });
+
+    var groups = ORDER_COLORS.map(function (o) { return { name: o[0], color: o[1] }; }).concat([OTHER])
+      .filter(function (g) { return byOrder[g.name]; });
+    var items = [], max = 1;
+    groups.forEach(function (g) {
+      var fams = Object.keys(byOrder[g.name]).map(function (k) {
+        var f = byOrder[g.name][k];
+        return { label: k, family: f.family, order: f.order, species: Object.keys(f.species).sort(), color: g.color };
+      }).sort(function (a, b) { return b.species.length - a.species.length || a.label.localeCompare(b.label); });
+      var allSp = {};
+      fams.forEach(function (f) { f.species.forEach(function (s) { allSp[s] = 1; }); max = Math.max(max, f.species.length); });
+      g.families = fams;
+      g.speciesCount = Object.keys(allSp).length;
+      items = items.concat(fams);
+    });
+
+    app.querySelector(".coll-tax-legend").innerHTML = groups.map(function (g) {
+      return '<span class="coll-legend-item"><span class="coll-swatch" style="background:' + g.color + '"></span>' + esc(g.name) + "</span>";
+    }).join("");
+
+    var html = "", i = 0;
+    groups.forEach(function (g) {
+      html += '<div class="coll-group-h" role="presentation"><span class="coll-swatch" style="background:' + g.color + '"></span>' +
+        "<strong>" + esc(g.name) + "</strong> " +
+        '<span class="coll-muted">' + g.families.length + " famil" + (g.families.length === 1 ? "y" : "ies") +
+        " · " + g.speciesCount + " species</span></div>";
+      g.families.forEach(function (f) {
+        html += '<div class="coll-bar-row" role="listitem" tabindex="0" data-i="' + (i++) + '">' +
+          '<span class="coll-bar-name">' + esc(f.label) + "</span>" +
+          '<span class="coll-bar-track"><span class="coll-bar" style="width:' + ((f.species.length / max) * 100).toFixed(2) +
+          "%;background:" + f.color + '"></span></span>' +
+          '<span class="coll-bar-val">' + f.species.length + "</span></div>";
+      });
+    });
+    var host = app.querySelector(".coll-tax");
+    host.innerHTML = html;
+
+    attachTips(host, function (k) {
+      var f = items[k], shown = f.species.slice(0, 12);
+      return "<strong>" + esc(f.family) + "</strong> " + '<span class="coll-muted">' + esc(f.order) + "</span>" +
+        '<div class="coll-tip-grid"><span>Species</span><b>' + f.species.length + "</b></div>" +
+        '<ul class="coll-tip-list">' + shown.map(function (s) { return "<li><i>" + esc(s) + "</i></li>"; }).join("") +
+        (f.species.length > shown.length ? '<li class="coll-muted">+ ' + (f.species.length - shown.length) + " more</li>" : "") + "</ul>";
     });
   }
 

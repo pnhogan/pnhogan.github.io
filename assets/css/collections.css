@@ -95,6 +95,20 @@
 .coll-tip-grid span { color: var(--coll-muted); }
 .coll-tip-grid b { text-align: right; font-variant-numeric: tabular-nums; }
 
+/* collecting calendar */
+#coll-cal { height: 600px; width: 100%; max-width: 470px; }
+.coll-cal-legend { max-width: 470px; }
+
+/* species per family, by order */
+.coll-legend { display: flex; flex-wrap: wrap; gap: 0.3em 1em; font-size: 0.75em; margin-bottom: 0.6em; }
+.coll-legend-item { display: inline-flex; align-items: center; gap: 0.35em; }
+.coll-swatch { display: inline-block; width: 10px; height: 10px; border-radius: 2px; flex: none; }
+.coll-group-h { font-size: 0.8em; margin: 0.9em 0 0.2em; display: flex; align-items: center; gap: 0.45em; flex-wrap: wrap; }
+.coll-group-h:first-child { margin-top: 0; }
+.coll-tax .coll-bar-track { height: 12px; }
+.coll-tip-list { margin: 0.35em 0 0; padding-left: 1.1em; }
+.coll-tip-list li { margin: 0; }
+
 /* recent table */
 .coll-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .coll-table { width: 100%; font-size: 0.75em; border-collapse: collapse; display: table; }
@@ -108,5 +122,6 @@
 
 @media (max-width: 600px) {
   #coll-map { height: 340px; }
+  #coll-cal { height: 520px; }
   .coll-bar-row { grid-template-columns: 10em 1fr 2.8em; }
 }
