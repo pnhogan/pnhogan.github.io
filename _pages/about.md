@@ -8,7 +8,7 @@ redirect_from:
   - /about.html
 ---
 
-I am a Ph.D. candidate in the [Department of Entomology](https://entomology.illinois.edu/) at the University of Illinois Urbana-Champaign and a Graduate Research Assistant at the Illinois Natural History Survey, Prairie Research Institute. In 2025–2026 I am a Big Ten Academic Alliance/Smithsonian Institution Predoctoral Fellow at the National Museum of Natural History, Smithsonian Institution.
+I am a Ph.D. candidate in the [Department of Entomology](https://entomology.illinois.edu/) at the University of Illinois Urbana-Champaign and a Graduate Research Assistant at the Illinois Natural History Survey, Prairie Research Institute. During 2025–2026 I was a Big Ten Academic Alliance/Smithsonian Institution Predoctoral Fellow at the National Museum of Natural History, Smithsonian Institution.
 
 My research focuses on the distribution, systematics, and conservation of aquatic insects, especially stoneflies (Plecoptera) and caddisflies (Trichoptera). My dissertation (anticipated May 2027) uses distribution modeling of the Midwest USA stonefly assemblage and reconstructs the regional post-Pleistocene glaciation dispersal pathways of the winter stonefly genus *Allocapnia* Claassen, 1928.
 
